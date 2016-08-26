@@ -38,3 +38,10 @@ captures/
 
 # Keystore files
 *.jks
+
+# Desktop garbage
+desktop.ini
+thumbs.db
+ehthumbs.db
+*.lnk
+.DS_Store

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Ubicación UTB</string>
+    <string name="action_settings">Ajustes</string>
+    <string name="navigation_drawer_close">Cerrar menú principal</string>
+    <string name="navigation_drawer_open">Abrir menú principal</string>
+</resources>
