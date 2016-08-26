@@ -4,4 +4,9 @@
     <string name="action_settings">Ajustes</string>
     <string name="navigation_drawer_close">Cerrar menú principal</string>
     <string name="navigation_drawer_open">Abrir menú principal</string>
+    <string name="title_activity_buscar">Buscar</string>
+    <string name="title_activity_categorias">Categorías</string>
+    <string name="title_activity_mapa">Mapa</string>
+    <string name="title_activity_ubicacion">Ubicación</string>
+    <string name="title_activity_usuario">Usuario</string>
 </resources>
