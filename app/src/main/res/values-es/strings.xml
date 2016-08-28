@@ -9,4 +9,6 @@
     <string name="title_activity_mapa">Mapa</string>
     <string name="title_activity_ubicacion">Ubicación</string>
     <string name="title_activity_usuario">Usuario</string>
+    <string name="entrada_utb">Entrada UTB</string>
+    <string name="lugar_utb">UTB Place</string>
 </resources>

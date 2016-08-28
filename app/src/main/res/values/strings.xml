@@ -10,4 +10,6 @@
     <string name="title_activity_categorias">Categories</string>
     <string name="title_activity_ubicacion">Location</string>
     <string name="title_activity_mapa">Map</string>
+    <string name="lugar_utb">Lugar Utb</string>
+    <string name="entrada_utb">Entrada UTB</string>
 </resources>

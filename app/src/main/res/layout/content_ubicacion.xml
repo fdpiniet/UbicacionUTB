@@ -12,4 +12,50 @@
     tools:context="utb.desarrollomovil.ubicacionutb.UbicacionActivity"
     tools:showIn="@layout/activity_ubicacion">
 
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:weightSum="1">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="49dp"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="@string/entrada_utb"
+                android:id="@+id/Lugar_utb"
+                android:layout_gravity="center_horizontal"
+                android:textAlignment="center" />
+
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/imageView2"
+                android:layout_gravity="center_horizontal"
+                android:background="@mipmap/tecnologica"
+                android:contentDescription="entrada_principal_utb" />
+
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="405dp"
+                android:id="@+id/listView"
+                android:layout_gravity="center_horizontal" />
+
+        </LinearLayout>
+
+        <ScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/scrollView" />
+
+    </LinearLayout>
+
 </RelativeLayout>
