@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Ubicación UTB</string>
-    <string name="action_settings">Ajustes</string>
+    <string name="main_menu_navigation_ajustes">Ajustes</string>
+    <string name="main_menu_navigation_header_navegacion">Navegación</string>
     <string name="navigation_drawer_close">Cerrar menú principal</string>
     <string name="navigation_drawer_open">Abrir menú principal</string>
     <string name="title_activity_buscar">Buscar</string>
     <string name="title_activity_categorias">Categorías</string>
+    <string name="title_activity_main">Inicio</string>
     <string name="title_activity_mapa">Mapa</string>
     <string name="title_activity_ubicacion">Ubicación</string>
     <string name="title_activity_usuario">Usuario</string>
+    <string name="main_menu_navigation_horario">Mi horario</string>
+    <string name="main_menu_navigation_iniciar_sesion">Iniciar sesión</string>
+    <string name="main_menu_navigation_cerrar_sesion">Cerrar sesión</string>
+    <string name="action_about">Acerca de</string>
+    <string name="app_tagline">Conoce tu Universidad</string>
 </resources>

@@ -1,13 +1,27 @@
 <resources>
-    <string name="app_name">Ubicación UTB</string>
+    <string name="app_name" translatable="false">Ubicación UTB</string>
 
     <string name="navigation_drawer_open">Open main menu</string>
     <string name="navigation_drawer_close">Close main menu</string>
 
-    <string name="action_settings">Settings</string>
+    <string name="title_activity_main">Home</string>
     <string name="title_activity_usuario">User</string>
     <string name="title_activity_buscar">Search</string>
     <string name="title_activity_categorias">Categories</string>
     <string name="title_activity_ubicacion">Location</string>
     <string name="title_activity_mapa">Map</string>
+
+    <string name="main_menu_navigation_inicio" translatable="false">@string/title_activity_main</string>
+    <string name="main_menu_navigation_header_navegacion">Navigation</string>
+    <string name="main_menu_navigation_categorias" translatable="false">@string/title_activity_categorias</string>
+    <string name="main_menu_navigation_buscar" translatable="false">@string/title_activity_buscar</string>
+    <string name="main_menu_navigation_mapa" translatable="false">@string/title_activity_mapa</string>
+    <string name="main_menu_navigation_ajustes">Settings</string>
+    <string name="main_menu_navigation_horario">My schedule</string>
+    <string name="main_menu_navigation_iniciar_sesion">Log in</string>
+    <string name="main_menu_navigation_cerrar_sesion">Log out</string>
+    <string name="action_about">About</string>
+    <string name="nombre_universidad" translatable="false">Universidad Tecnológica de Bolívar</string>
+    <string name="app_tagline">Explore your University</string>
+
 </resources>

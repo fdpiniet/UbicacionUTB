@@ -15,5 +15,30 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:text="@string/app_name"
+        android:id="@+id/textViewActivityMainTitulo"
+        android:layout_marginTop="38dp"
+        android:textStyle="bold"
+        android:textSize="@dimen/titulo_activity_main"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/app_tagline"
+        android:id="@+id/textViewAcitivityMainTagline"
+        android:layout_below="@+id/textViewActivityMainTitulo"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="46dp"
+        android:textSize="@dimen/titulo_activity_main_tagline" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageViewActivityMainLogoUniversidad"
+        android:contentDescription="@string/nombre_universidad"
+        android:src="@drawable/logo_utb_medalla"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/textViewAcitivityMainTagline" />
 </RelativeLayout>

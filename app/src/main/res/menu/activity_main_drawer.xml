@@ -1,36 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Import" />
-        <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Gallery" />
-        <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
-        <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
-    </group>
+    <item
+        android:id="@+id/nav_inicio"
+        android:title="@string/main_menu_navigation_inicio"
+        android:icon="@drawable/ic_home" />
 
-    <item android:title="Communicate">
+    <item android:title="@string/main_menu_navigation_header_navegacion">
         <menu>
             <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
+                android:id="@+id/nav_mapa"
+                android:title="@string/main_menu_navigation_mapa"
+                android:icon="@drawable/ic_map" />
             <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:id="@+id/nav_categorias"
+                android:title="@string/main_menu_navigation_categorias"
+                android:icon="@drawable/ic_format_list_bulleted" />
+            <item
+                android:id="@+id/nav_buscar"
+                android:title="@string/main_menu_navigation_buscar"
+                android:icon="@drawable/ic_search" />
         </menu>
     </item>
 
+    <item android:title="Usuario">
+        <menu>
+            <item
+                android:id="@+id/nav_horario"
+                android:title="@string/main_menu_navigation_horario"
+                android:icon="@drawable/ic_schedule"
+                android:enabled="false"
+                android:visible="false" />
+            <item
+                android:id="@+id/nav_iniciar_sesion"
+                android:title="@string/main_menu_navigation_iniciar_sesion"
+                android:icon="@drawable/ic_person" />
+            <item
+                android:id="@+id/nav_cerrar_sesion"
+                android:title="@string/main_menu_navigation_cerrar_sesion"
+                android:icon="@drawable/ic_exit_to_app"
+                android:enabled="false"
+                android:visible="false" />
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/nav_ajustes"
+        android:title="@string/main_menu_navigation_ajustes"
+        android:icon="@drawable/ic_settings" />
 </menu>
