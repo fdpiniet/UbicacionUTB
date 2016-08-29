@@ -15,4 +15,6 @@
     <string name="main_menu_navigation_cerrar_sesion">Cerrar sesión</string>
     <string name="action_about">Acerca de</string>
     <string name="app_tagline">Conoce tu Universidad</string>
+    <string name="entrada_utb">Entrada UTB</string>
+    <string name="lugar_utb">UTB Place</string>
 </resources>
