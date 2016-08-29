@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="main_menu_navigation_ajustes">Ajustes</string>
-    <string name="main_menu_navigation_header_navegacion">Navegación</string>
     <string name="navigation_drawer_close">Cerrar menú principal</string>
     <string name="navigation_drawer_open">Abrir menú principal</string>
     <string name="title_activity_buscar">Buscar</string>
@@ -16,5 +15,5 @@
     <string name="action_about">Acerca de</string>
     <string name="app_tagline">Conoce tu Universidad</string>
     <string name="entrada_utb">Entrada UTB</string>
-    <string name="lugar_utb">UTB Place</string>
+    <string name="lugar_utb">Lugar Utb</string>
 </resources>

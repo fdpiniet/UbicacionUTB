@@ -23,7 +23,7 @@
         </menu>
     </item>
 
-    <item android:title="Usuario">
+    <item android:title="@string/main_menu_navigation_header_usuario">
         <menu>
             <item
                 android:id="@+id/nav_horario"

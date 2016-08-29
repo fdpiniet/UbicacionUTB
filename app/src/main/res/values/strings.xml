@@ -11,7 +11,8 @@
     <string name="title_activity_ubicacion">Location</string>
     <string name="title_activity_mapa">Map</string>
     <string name="main_menu_navigation_inicio" translatable="false">@string/title_activity_main</string>
-    <string name="main_menu_navigation_header_navegacion">Navigation</string>
+    <string name="main_menu_navigation_header_navegacion" translatable="false">Navigation</string>
+    <string name="main_menu_navigation_header_usuario" translatable="false">@string/title_activity_usuario</string>
     <string name="main_menu_navigation_categorias" translatable="false">@string/title_activity_categorias</string>
     <string name="main_menu_navigation_buscar" translatable="false">@string/title_activity_buscar</string>
     <string name="main_menu_navigation_mapa" translatable="false">@string/title_activity_mapa</string>
@@ -22,7 +23,7 @@
     <string name="action_about">About</string>
     <string name="nombre_universidad" translatable="false">Universidad Tecnológica de Bolívar</string>
     <string name="app_tagline">Explore your University</string>
-    
-    <string name="lugar_utb">Lugar Utb</string>
+
     <string name="entrada_utb">Entrada UTB</string>
+    <string name="lugar_utb">UTB Place</string>
 </resources>

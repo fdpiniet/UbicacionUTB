@@ -11,5 +11,59 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="utb.desarrollomovil.ubicacionutb.BuscarActivity"
     tools:showIn="@layout/activity_buscar">
+    <EditText
+        android:layout_width="200dp"
+        android:layout_height="40dp"
+        android:id="@+id/searchEditText"
+        android:layout_alignBottom="@+id/searchImageButton"
+        android:layout_centerHorizontal="true"
+        android:textColor="#080808" />
 
+    <TextView
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Busqueda:"
+        android:id="@+id/searchTextView"
+        android:textSize="@dimen/abc_action_bar_progress_bar_size"
+        android:layout_above="@+id/searchEditText"
+        android:layout_alignEnd="@+id/searchEditText"
+        android:layout_alignStart="@+id/searchEditText"
+        android:textColor="#080808" />
+
+    <ImageButton
+        android:layout_width="40dp"
+        android:layout_height="50dp"
+        android:id="@+id/searchImageButton"
+        android:src="@android:drawable/ic_menu_search"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@+id/searchEditText" />
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/searchListView"
+        android:layout_below="@+id/searchEditText"
+        android:layout_alignParentEnd="true"
+        android:choiceMode="singleChoice" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@+id/searchTextView"
+        android:weightSum="1"
+        android:layout_alignParentStart="true">
+
+        <ImageView
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/searchImageView2"
+            android:background="@drawable/logo_utb_medalla"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="0.62" />
+    </LinearLayout>
 </RelativeLayout>

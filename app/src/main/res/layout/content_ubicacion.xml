@@ -38,7 +38,7 @@
             <ImageView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/imageView2"
+                android:id="@+id/searchImageView2"
                 android:layout_gravity="center_horizontal"
                 android:background="@mipmap/tecnologica"
                 android:contentDescription="entrada_principal_utb" />
@@ -46,7 +46,7 @@
             <ListView
                 android:layout_width="match_parent"
                 android:layout_height="405dp"
-                android:id="@+id/listView"
+                android:id="@+id/searchListView"
                 android:layout_gravity="center_horizontal" />
 
         </LinearLayout>
