@@ -9,4 +9,10 @@
     <string name="title_activity_mapa">Mapa</string>
     <string name="title_activity_ubicacion">Ubicación</string>
     <string name="title_activity_usuario">Usuario</string>
+    <string name="option_oficina">Oficina</string>
+    <string name="opcion1">opción una</string>
+    <string name="opcion2">opción dos</string>
+    <string name="opcion3">opción tres</string>
+    <string name="option_edificios">Edificios</string>
+    <string name="option_aulas">Aulas</string>
 </resources>

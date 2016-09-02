@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Ubicación UTB</string>
+    <string name="app_name">Location UTB</string>
 
     <string name="navigation_drawer_open">Open main menu</string>
     <string name="navigation_drawer_close">Close main menu</string>
@@ -10,4 +10,10 @@
     <string name="title_activity_categorias">Categories</string>
     <string name="title_activity_ubicacion">Location</string>
     <string name="title_activity_mapa">Map</string>
+    <string name="option_oficina">Office</string>
+    <string name="opcion1">option one</string>
+    <string name="opcion2">option two</string>
+    <string name="opcion3">option three</string>
+    <string name="option_edificios">building</string>
+    <string name="option_aulas">classrooms</string>
 </resources>
