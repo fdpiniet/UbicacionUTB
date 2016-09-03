@@ -21,12 +21,14 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <ScrollView
+    <include layout="@layout/content_categorias" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="56dp">
-        <include layout="@layout/content_categorias" />
-    </ScrollView>
-
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@android:drawable/ic_dialog_email" />
 
 </android.support.design.widget.CoordinatorLayout>
