@@ -12,4 +12,193 @@
     tools:context="utb.desarrollomovil.ubicacionutb.CategoriasActivity"
     tools:showIn="@layout/activity_categorias">
 
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="137dp"
+            android:id="@+id/imageView"
+            android:src="@drawable/logo_utb_medalla" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:id="@+id/layoutListaAcordeon">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="8dp"
+                android:elevation="5dp"
+                android:background="#2a7d4e"
+                android:layout_marginBottom="5dp"
+                android:id="@+id/layout_option_uno">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text="Oficinas"
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp" />
+
+                <ImageView
+                    android:id="@+id/imageViewExpand"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="details"
+                    android:src="@drawable/flecha_abajo_categorias" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/linearLayoutDetails"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="8dp"
+                android:visibility="gone">
+
+                <Button
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Opción 1"
+                    android:textAlignment="textStart"
+                    style="?android:attr/borderlessButtonStyle"/>
+                <Button
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Opción 2"
+                    android:textAlignment="textStart"
+                    style="?android:attr/borderlessButtonStyle"/>
+                <Button
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Opción 3"
+                    android:textAlignment="textStart"
+                    style="?android:attr/borderlessButtonStyle"/>
+            </LinearLayout>
+
+            <!--- Opcion aulas-->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="8dp"
+                android:elevation="5dp"
+                android:layout_marginBottom="5dp"
+                android:id="@+id/layout_option_dos"
+                android:background="#2a7d4e">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text="Edificios"
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp" />
+
+                <ImageView
+                    android:id="@+id/imageViewExpand1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="details"
+                    android:src="@drawable/flecha_abajo_categorias" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/linearLayoutDetails1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="8dp"
+                android:visibility="gone">
+
+                <Button
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Opción 1"
+                    android:textAlignment="textStart"
+                    style="?android:attr/borderlessButtonStyle"/>
+                <Button
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Opción 2"
+                    android:textAlignment="textStart"
+                    style="?android:attr/borderlessButtonStyle"/>
+                <Button
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Opción 3"
+                    android:textAlignment="textStart"
+                    style="?android:attr/borderlessButtonStyle"/>
+            </LinearLayout>
+            <!---tercera opcion-->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="8dp"
+                android:elevation="5dp"
+                android:layout_marginBottom="5dp"
+                android:id="@+id/layout_option_tres"
+                android:background="#2a7d4e">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text="Aulas"
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp" />
+
+                <ImageView
+                    android:id="@+id/imageViewExpand2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="details"
+                    android:src="@drawable/flecha_abajo_categorias" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/linearLayoutDetails2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="8dp"
+                android:visibility="gone">
+
+                <Button
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Opción 1"
+                    android:textAlignment="textStart"
+                    style="?android:attr/borderlessButtonStyle"/>
+                <Button
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Opción 2"
+                    android:textAlignment="textStart"
+                    style="?android:attr/borderlessButtonStyle"/>
+                <Button
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Opción 3"
+                    android:textAlignment="textStart"
+                    style="?android:attr/borderlessButtonStyle"/>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
 </RelativeLayout>
