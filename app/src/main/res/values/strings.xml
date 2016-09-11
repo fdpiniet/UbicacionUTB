@@ -17,7 +17,7 @@
     <string name="main_menu_navigation_buscar" translatable="false">@string/title_activity_buscar</string>
     <string name="main_menu_navigation_mapa" translatable="false">@string/title_activity_mapa</string>
     <string name="main_menu_navigation_ajustes">Settings</string>
-    <string name="main_menu_navigation_horario">My schedule</string>
+    <string name="main_menu_navigation_horario">My Schedule</string>
     <string name="main_menu_navigation_iniciar_sesion">Log in</string>
     <string name="main_menu_navigation_cerrar_sesion">Log out</string>
     <string name="action_about">About</string>

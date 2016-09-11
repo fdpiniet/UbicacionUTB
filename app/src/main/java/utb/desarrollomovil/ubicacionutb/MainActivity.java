@@ -3,6 +3,7 @@ package utb.desarrollomovil.ubicacionutb;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -13,8 +14,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity {
+    AccionesMenuPrincipal handlerMenuPrincipal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +40,8 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        handlerMenuPrincipal = new AccionesMenuPrincipal(this);
+        navigationView.setNavigationItemSelectedListener(handlerMenuPrincipal);
     }
 
     @Override
@@ -68,38 +70,10 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_about) {
+            Log.d(this.getClass().getName(), "Diálogo 'Acerca De' no implementado / enlazado.");
             return true;
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_inicio) {
-
-        } else if (id == R.id.nav_mapa) {
-
-        } else if (id == R.id.nav_categorias) {
-
-        } else if (id == R.id.nav_buscar) {
-
-        } else if (id == R.id.nav_horario) {
-
-        } else if (id == R.id.nav_iniciar_sesion) {
-
-        } else if (id == R.id.nav_cerrar_sesion) {
-
-        } else if (id == R.id.nav_ajustes) {
-
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
     }
 }

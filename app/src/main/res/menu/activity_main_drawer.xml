@@ -28,9 +28,8 @@
             <item
                 android:id="@+id/nav_horario"
                 android:title="@string/main_menu_navigation_horario"
-                android:icon="@drawable/ic_schedule"
-                android:enabled="false"
-                android:visible="false" />
+                android:icon="@drawable/ic_schedule" />
+                <!-- android:enabled="false" android:visible="false" -->
             <item
                 android:id="@+id/nav_iniciar_sesion"
                 android:title="@string/main_menu_navigation_iniciar_sesion"
@@ -38,9 +37,8 @@
             <item
                 android:id="@+id/nav_cerrar_sesion"
                 android:title="@string/main_menu_navigation_cerrar_sesion"
-                android:icon="@drawable/ic_exit_to_app"
-                android:enabled="false"
-                android:visible="false" />
+                android:icon="@drawable/ic_exit_to_app" />
+                <!--android:enabled="false" android:visible="false"-->
         </menu>
     </item>
 
