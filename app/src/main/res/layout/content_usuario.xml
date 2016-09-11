@@ -12,4 +12,79 @@
     tools:context="utb.desarrollomovil.ubicacionutb.UsuarioActivity"
     tools:showIn="@layout/activity_usuario">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Listado de Clases"
+        android:id="@+id/textViewUsuario"
+        android:textSize="30dp"
+        android:textColor="#040404"
+        android:layout_below="@+id/imageViewUsuario"
+        android:layout_centerHorizontal="true" />
+
+    <ImageView
+        android:layout_width="300dp"
+        android:layout_height="150dp"
+        android:id="@+id/imageViewUsuario"
+        android:src="@drawable/logo_utb_medalla"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Clase 1"
+        android:id="@+id/textView2Usuario"
+        android:textSize="25dp"
+        android:textColor="#040404"
+        android:layout_centerVertical="true"
+        android:layout_alignStart="@+id/textViewUsuario" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ver Detalles"
+        android:id="@+id/textView3Usuario"
+        android:textSize="18dp"
+        android:textColor="#040404"
+        android:layout_below="@+id/textView2Usuario"
+        android:layout_alignStart="@+id/textView2Usuario" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ver Detalles"
+        android:id="@+id/textView4Usuario"
+        android:textSize="18dp"
+        android:textColor="#040404"
+        android:layout_below="@+id/textView5Usuario"
+        android:layout_alignStart="@+id/textView5Usuario" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Clase 2"
+        android:id="@+id/textView5Usuario"
+        android:layout_marginTop="46dp"
+        android:layout_below="@+id/textView3Usuario"
+        android:layout_alignStart="@+id/textView3Usuario"
+        android:textSize="25dp" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageButtonUsuario"
+        android:src="@android:drawable/ic_menu_send"
+        android:layout_above="@+id/textView5Usuario"
+        android:layout_alignEnd="@+id/textViewUsuario" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageButton2Usuario"
+        android:src="@android:drawable/ic_menu_send"
+        android:layout_alignBottom="@+id/textView4Usuario"
+        android:layout_alignStart="@+id/imageButtonUsuario" />
+
 </RelativeLayout>
