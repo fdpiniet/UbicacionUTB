@@ -24,6 +24,9 @@ import android.view.MenuItem;
  *
  * Esta clase no asigna ningún layout a la Activity. Debe ser especificado por subclases usando
  * el método setContentView.
+ *
+ * Vea activity_main.xml por un ejemplo de la estructura que debe tener el layout de cada clase
+ * hija de UbicacionUTBActivity para su correcto funcionamiento.
  */
 public abstract class UbicacionUTBActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     /**
@@ -58,6 +61,26 @@ public abstract class UbicacionUTBActivity extends AppCompatActivity implements 
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -70,7 +93,7 @@ public abstract class UbicacionUTBActivity extends AppCompatActivity implements 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.toolbar, menu);
         return true;
     }
 

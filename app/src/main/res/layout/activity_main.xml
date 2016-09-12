@@ -8,18 +8,33 @@
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
 
-    <include
-        layout="@layout/app_bar_main"
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+        <include layout="@layout/menu_toolbar" />
+
+        <include layout="@layout/content_main" />
+
+    </android.support.design.widget.CoordinatorLayout>
 
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:fitsSystemWindows="true"
-        app:headerLayout="@layout/nav_header_main"
-        app:menu="@menu/activity_main_drawer" />
+        app:headerLayout="@layout/menu_principal"
+        app:menu="@menu/principal"/>
+
+        <!--
+          >> NOTA:
+          >>
+          >> Usar la siguiente linea en el elemento NavigationView anterior para esconder el menú
+          >> principal en la vista previa de Android Studio.
+          >>
+          >>     tools:visibility="invisible"
+          >>
+          >> Remueva dicha linea para hacer el menú principal visible en la vista previa.
+          -->
 
 </android.support.v4.widget.DrawerLayout>
