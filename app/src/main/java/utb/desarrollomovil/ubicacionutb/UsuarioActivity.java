@@ -1,17 +1,35 @@
 package utb.desarrollomovil.ubicacionutb;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 
-public class UsuarioActivity extends AppCompatActivity {
+public class UsuarioActivity extends UbicacionUTBActivity {
+    @Override
+    protected void inicializarLayout() {
+        setContentView(R.layout.activity_usuario);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_usuario);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
 }

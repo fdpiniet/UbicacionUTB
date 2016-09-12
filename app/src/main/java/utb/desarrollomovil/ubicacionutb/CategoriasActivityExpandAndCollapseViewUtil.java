@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
 /**
  * Created by LabSoftware15 on 2/09/16.
  */
-public class ExpandAndCollapseViewUtil{
+public class CategoriasActivityExpandAndCollapseViewUtil {
 
 
     public static void expand(final ViewGroup v, int duration) {

@@ -15,8 +15,8 @@ import android.view.MenuItem;
 /**
  * Created by Fabian on 11/09/2016.
  *
- * Clase base de toda Activity de Ubicación UTB. Define elementos que deben estar presentes en
- * toda Activity de la aplicación, sin excepción.
+ * Clase base de toda Activity de Ubicación UTB salvo por ActivityMapa. Define elementos que deben
+ * estar presentes en toda Activity de la aplicación, sin excepción.
  *
  * En particular, define el Toolbar (barra superior con título de Activity de toda Activity y su
  * respectivo menú de Toolbar. También define el menú principal (Drawer) a un lado de la pantalla
