@@ -10,6 +10,12 @@ import android.view.MenuItem;
 
 /**
  * Created by Fabian on 11/09/2016.
+ *
+ * Maneja eventos del menú lateral principal.
+ *
+ * Toda Activity que necesita mostrar el menú principal debe crear una instancia de este objeto
+ * y pasarla como argumento al método setNavigationItemSelectedListener del NavigationView de
+ * dicho menú lateral.
  */
 public class AccionesMenuPrincipal implements NavigationView.OnNavigationItemSelectedListener {
     protected Activity contexto;
