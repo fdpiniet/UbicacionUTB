@@ -1,4 +1,4 @@
-package utb.desarrollomovil.ubicacionutb;
+package utb.desarrollomovil.ubicacionutb.util;
 
 import android.util.Log;
 import android.view.View;

@@ -8,6 +8,8 @@ import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import utb.desarrollomovil.ubicacionutb.util.CategoriasActivityExpandAndCollapseViewUtil;
+
 public class CategoriasActivity extends UbicacionUTBActivity implements View.OnClickListener {
     private LinearLayout l,l1,l2;
     private ViewGroup linearLayoutDetails,linearLayoutDetails1,linearLayoutDetails2;
