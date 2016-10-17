@@ -16,4 +16,21 @@
     <string name="app_tagline">Conoce tu Universidad</string>
     <string name="entrada_utb">Entrada UTB</string>
     <string name="lugar_utb">Lugar Utb</string>
+    <string name="permiso_ubicacion_no_preguntar">Permiso denegado permanentemente.</string>
+    <string name="permiso_ubicacion_denegado">Permiso denegado.</string>
+    <string name="permiso_ubicacion_razon">Esta aplicación requiere que su GPS esté activado.</string>
+    <string name="button_permitir">Permitir</string>
+    <string name="button_denegar">Denegar</string>
+    <string name="button_aceptar">Aceptar</string>
+    <string name="button_ok">OK</string>
+    <string name="button_cancelar">Cancelar</string>
+    <string name="permiso_ubicacion_precision">También se necesita activar el modo de alta precisión de su GPS. Si está desactivado, la aplicación mostrará ubicaciones, pero no podrá mostrar su ubicación actual.</string>
+    <string name="button_si">Sí</string>
+    <string name="button_no">No</string>
+    <string name="button_abrir">Abrir</string>
+    <string name="button_cerrar">Cerrar</string>
+    <string name="button_salir">Salir</string>
+    <string name="permiso_ubicacion_lanzar_settings">Lanzar ajustes?</string>
+    <string name="permiso_ubicacion_precision_activado">Modo de alta precisión activado.</string>
+    <string name="permiso_ubicacion_precision_desactivado">Continuando sin modo de alta precisión.</string>
 </resources>

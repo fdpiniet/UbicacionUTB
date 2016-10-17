@@ -54,6 +54,16 @@ public abstract class UbicacionUTBActivity extends AppCompatActivity implements 
     }
 
     @Override
+    public void onRestart() {
+        super.onRestart();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         inicializarLayout();
@@ -113,6 +123,16 @@ public abstract class UbicacionUTBActivity extends AppCompatActivity implements 
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    @Override
+    public void onSaveInstanceState (Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
     /**
      * Called when an item in the navigation menu is selected.
      *
@@ -131,8 +151,7 @@ public abstract class UbicacionUTBActivity extends AppCompatActivity implements 
             siguienteAcitivty = new Intent(this, MainActivity.class);
             this.startActivity(siguienteAcitivty);
         } else if (id == R.id.nav_mapa) {
-            siguienteAcitivty = new Intent(this, MapaActivity.class);
-            this.startActivity(siguienteAcitivty);
+            MapaActivity.lanzarMapa(this);
         } else if (id == R.id.nav_categorias) {
             siguienteAcitivty = new Intent(this, CategoriasActivity.class);
             this.startActivity(siguienteAcitivty);
