@@ -208,6 +208,7 @@ public abstract class UbicacionUTBActivity extends AppCompatActivity implements 
             // Se muestra el maapa, sin mostrar algún lugar en específico.
             drawer.closeDrawer(GravityCompat.START);
             MapaActivity.lanzarMapa(this);
+            //MapaActivity.lanzarMapa(this, 10.368202, -75.466161); // Para depuración.
             return true;
 
         } else if (id == R.id.nav_categorias) {

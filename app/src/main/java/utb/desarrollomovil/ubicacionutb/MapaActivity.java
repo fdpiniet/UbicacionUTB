@@ -6,10 +6,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +19,9 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -48,7 +53,7 @@ import utb.desarrollomovil.ubicacionutb.net.ClienteJSON;
  * o "actual" del usuario será tratada como una posición correspondiente al centro del campus
  * de la Universidad (Ternera.)
  *
- * Las operaciones soportadas por el mapa hasta ahora son (escrito en 2016/10/17):
+ * Las operaciones soportadas por el mapa hasta ahora son (escrito en 2016/10/17; 14:30):
  *
  *     -- Ninguna: sólo se muestra el mapa. Si la activity es iniciada con una operación "Ninguna",
  *        entonces el mapa será centrado sobre la universidad. (Es decir, se realiza "Centrar")
@@ -66,11 +71,17 @@ import utb.desarrollomovil.ubicacionutb.net.ClienteJSON;
  * TODO: implementar más operaciones.
  */
 @RuntimePermissions
-public class MapaActivity extends UbicacionUTBActivity implements OnMapReadyCallback, ClienteJSON.HandlerClienteJSON {
+public class MapaActivity extends UbicacionUTBActivity implements OnMapReadyCallback, ClienteJSON.HandlerClienteJSON, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     // "Enumeración" de acciones soportadas por el mapa.
-    public static final int ACCION_NINGUNA = 0;
-    public static final int ACCION_CENTRAR = 1;
-    public static final int ACCION_MOSTRAR_UBICACION = 2;
+    public static final int ACCION_NO_ESPECIFICADA = 0;
+    public static final int ACCION_NINGUNA = 1;
+    public static final int ACCION_CENTRAR = 2;
+    public static final int ACCION_MOSTRAR_UBICACION = 3;
+
+    // "Enumeración" de posible estados del GPS.
+    public static final int ESTADO_GPS_DESCONOCIDO = 0;
+    public static final int ESTADO_GPS_DESACTIVADO_O_WIFI = 1;
+    public static final int ESTADO_GPS_ALTA_PRECISION = 2;
 
     /*
      * Nombres inmutables de propiedades semi-permanentes almacenadas en Bundles.
@@ -98,8 +109,10 @@ public class MapaActivity extends UbicacionUTBActivity implements OnMapReadyCall
      *   -- PROPIEDAD_LONGITUD_MAPA: (double) longitud de la cámara (punto de vista) en el mapa.
      *   -- PROPIEDAD_LATITUD_INTENT: (double) latitud recibida por Intent. Usada por acciones.
      *   -- PROPIEDAD_LONGITUD_INTENT: (double) longitud recibida por Intent. Usada por acciones.
-     *   -- PROOPIEDAD_ZOOM: (float) nivel de zoom actual, del punto de vista del mapa.
-     *   -- PROOPIEDAD_ROTACION: (float) rotación en grados, del punto de vista del mapa (bearing.)
+     *   -- PROPIEDAD_ZOOM: (float) nivel de zoom actual, del punto de vista del mapa.
+     *   -- PROPIEDAD_ROTACION: (float) rotación en grados, del punto de vista del mapa (bearing.)
+     *   -- PROPIEDAD_ESTADO_GPS: (int) último estado GPS conocido. Ver ESTADO_GPS_*
+     *   -- PROPIEDAD_ACTUALIZAR_MY_LOCATION: (boolean) true si estadoGPS ha cambiado recientemente.
      */
     public static final String PROPIEDAD_ACCION = "ACCION";
     public static final String PROPIEDAD_REGRESO_SETTINGS = "REGRESO_SETTINGS";
@@ -109,6 +122,8 @@ public class MapaActivity extends UbicacionUTBActivity implements OnMapReadyCall
     public static final String PROPIEDAD_LONGITUD_INTENT = "LONGITUD_INTENT";
     public static final String PROPIEDAD_ZOOM = "ZOOM_MAPA";
     public static final String PROPIEDAD_ROTACION = "ROTACION_MAPA";
+    public static final String PROPIEDAD_ESTADO_GPS = "ESTADO_PROVEEDOR_GPS";
+    public static final String PROPIEDAD_ACTUALIZAR_MY_LOCATION = "ACTUALIZAR_MY_LOCATION";
 
     /*
      * Las siguientes constantes espeficícan nombres inmutables de "preferencias compartidas" (es
@@ -188,6 +203,7 @@ public class MapaActivity extends UbicacionUTBActivity implements OnMapReadyCall
     // Objetos críticos para el funcionamiento de las operaciones principales del mapa.
     private LocationManager locationManager;
     private GoogleMap mapa;
+    private GoogleApiClient serviciosGooglePlay;
     private ClienteJSON http;
 
     // Preferencias globales y locales. Persistencia de datos.
@@ -205,17 +221,36 @@ public class MapaActivity extends UbicacionUTBActivity implements OnMapReadyCall
     // True si se está regresando de la pantalla Settings después de pedirle permisos al usuario.
     private boolean regresandoDeSettings;
 
-    // Posición recibida de la Activity que inició este mapa con un Intent.
+    // Último estado conocido del GPS. No siempre corresponde al valor actual del GPS.
+    private int estadoGPS;
+
+    // Si es true, entonces se debe activar o desactivar MyLocation.
+    private boolean actualizarMyLocation;
+
+    /*
+     * Posición recibida de la Activity que inició este mapa con un Intent.
+     */
     private double latitudIntent;
     private double longitudIntent;
 
-    // Posición actual del mapa, de su punto de vista actual. No confundir con posición del usuario.
+    /*
+     * La posición que se usará para realizar operaciones/acciones en el mapa.
+     *
+     * No se debe confundir con las coordenadas recibidas por intent y tampoco se debe confundir
+     * con las coordenadas actuales de la camara en el mapa, que pueden ser obtenidas con
+     * mapa.getCameraPosition().target.{latitude,longitude}
+     *
+     * Debe ser alterado antes de realizar nuevas operaciones.
+     */
     private double latitudMapa;
     private double longitudMapa;
 
-    // Niveles de zoom y rotación actuales, del punto de vista del mapa.
+    // Niveles de zoom y rotación que las operaciones/acciones usarán. Alterar antes de hacer accioenes.
     private float zoomMapa;
     private float rotacionMapa;
+
+    // Si es true, entonces el primer desplazamiento de cámara será hecho instantaneamente, sin aniamr.
+    private boolean primerMovimiento;
 
     /**
      * Lanza esta Activity desde otra Activity mostrando las coordenadas LatLng ubicacion.
@@ -259,51 +294,120 @@ public class MapaActivity extends UbicacionUTBActivity implements OnMapReadyCall
         Bundle informacionInicio = new Bundle();
 
         // Instruyendo al mapa a no mostrar una ubicación específica.
-        informacionInicio.putInt(PROPIEDAD_ACCION, ACCION_NINGUNA);
+        informacionInicio.putInt(PROPIEDAD_ACCION, ACCION_NO_ESPECIFICADA);
         // ... agregar más propiedades aquí si llega a ser necesario.
 
         intentMapa.putExtras(informacionInicio);
         activity.startActivity(intentMapa);
     }
 
+    /** TODO: implementar y documentar cuando sea necesario hacer requests JSON. */
     @Override
     public void requestJSONExitoso(Object resultado, int codigoEstado) {
 
     }
 
+    /** TODO: implementar y documentar cuando sea necesario hacer requests JSON. */
     @Override
     public void requestJSONFallido(int codigoEstado) {
 
     }
 
+    /** TODO: implementar y documentar cuando sea necesario hacer requests JSON. */
     @Override
     public void requestJSONIniciado() {
 
     }
 
+    /** TODO: implementar y documentar cuando sea necesario hacer requests JSON. */
     @Override
     public void requestJSONFinalizado() {
 
     }
 
+    /** TODO: implementar y documentar cuando sea necesario hacer requests JSON. */
     @Override
     public void requestJSONReintentado(int numeroReintento) {
 
     }
 
     /**
+     * Centra la cámara sobre la posición actual del usuario, o mueve la cámara al centro de la
+     * Universidad si la ubicación del usuario no está disponible.
+     */
+    protected void accionCentrar() {
+        // Primero se intenta determinar la posición del usuario.
+        Location ultimaUbicacionConocida = null;
+        if (serviciosGooglePlay != null && serviciosGooglePlay.isConnected()) {
+            ultimaUbicacionConocida = LocationServices.FusedLocationApi.getLastLocation(serviciosGooglePlay);
+        }
+
+        if (ultimaUbicacionConocida != null) {
+            latitudMapa = ultimaUbicacionConocida.getLatitude();
+            longitudMapa = ultimaUbicacionConocida.getLongitude();
+        } else {
+            latitudMapa = DEFAULT_LATITUD;
+            longitudMapa = DEFAULT_LONGITUD;
+        }
+
+        accionMostrarUbicacion();
+    }
+
+    /**
+     * Mueve la cámara (con suavizado) hacia una ubicación dada por su latitud y longitud; la
+     * latitud es tomada de la variable latitudMapa y la longitud de longitudMapa, mientras que el
+     * zoom actual y la rotación de la cámara son tomados de zoomMapa y de rotacionMapa,
+     * respectivamente.
+     */
+    protected void accionMostrarUbicacion() {
+        // Configurando animación de movimiento de cámara.
+        CameraPosition nuevaPosicionCamara = new CameraPosition.Builder()
+                .target(new LatLng(latitudMapa, longitudMapa))
+                .zoom(zoomMapa)
+                .bearing(rotacionMapa)
+        .build();
+
+        // Se está especificando una posición inicial ose está moviendo hacia otra ubicación?
+        if (primerMovimiento) {
+            primerMovimiento = false;
+
+            // Se trata de una posición inicial.
+            mapa.moveCamera(CameraUpdateFactory.newCameraPosition(nuevaPosicionCamara));
+            return;
+        }
+
+        // No? Entonces se trata de otro desplazamiento de cámara.
+        mapa.animateCamera(CameraUpdateFactory.newCameraPosition(nuevaPosicionCamara));
+    }
+
+    /**
      * Procesa la acción "acción" y posteriormente cambia su valor a ACCION_NINGUNA, dejando el mapa
      * listo pare realizar otras operaciones.
      *
-     * No hace nada si la acción es ACCION_NINGUNA.
+     * Si la operación nes ACCION_NO_ESPECIFICADA, entonces ejecuta ACCION_CENTRAR (es la acción
+     * por defecto, por así decirlo.) Si la acción es ACCION_NINGUNA, entonces no se hace nada.
      *
      * TODO: terminar. Definir e implementar más acciones.
      */
     protected void procesarComando() {
-        Toast.makeText(this, "DEBUG: funciona()", Toast.LENGTH_SHORT).show();
+        switch(accion) {
+            case ACCION_CENTRAR:
+                accionCentrar();
+                break;
+            case ACCION_MOSTRAR_UBICACION:
+                accionMostrarUbicacion();
+                break;
+            case ACCION_NO_ESPECIFICADA:
+            default:
+                // Si la acción es inválida o no especificada, entonces se centra cámara en el mapa.
+                accionCentrar();
+                break;
+            case ACCION_NINGUNA:
+                // Nada que hacer.
 
-        CameraPosition inicial = (new CameraPosition.Builder()).target(COORDENADAS_LIMITES_UNIVERSIDAD.getCenter()).zoom(DEFAULT_ZOOM).bearing(DEFAULT_ROTACION).build();
-        mapa.moveCamera(CameraUpdateFactory.newCameraPosition(inicial));
+        }
+
+        accion = ACCION_NINGUNA;
     }
 
     /**
@@ -329,20 +433,55 @@ public class MapaActivity extends UbicacionUTBActivity implements OnMapReadyCall
         final Intent settings = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
 
         new AlertDialog.Builder(this)
-                .setTitle(R.string.title_activity_mapa)
-                .setMessage(getString(R.string.permiso_ubicacion_razon) + "\n\n" + getString(R.string.permiso_ubicacion_precision) + "\n\n" + getString(R.string.permiso_ubicacion_lanzar_settings))
-                .setPositiveButton(R.string.button_abrir, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        regresandoDeSettings = true;
-                        startActivity(settings);
-                    }
-                })
-                .setNegativeButton(R.string.button_cancelar, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        preferenciasLocales.edit().putBoolean(PREFERENCIA_DESACTIVAR_MY_LOCATION, true).commit();
-                        procesarComando();
-                    }
-                }).create().show();
+            .setTitle(R.string.title_activity_mapa)
+            .setMessage(getString(R.string.permiso_ubicacion_razon) + "\n\n" + getString(R.string.permiso_ubicacion_precision) + "\n\n" + getString(R.string.permiso_ubicacion_lanzar_settings))
+            .setPositiveButton(R.string.button_abrir, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    regresandoDeSettings = true;
+                    startActivity(settings);
+                }
+            })
+            .setNegativeButton(R.string.button_cancelar, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    preferenciasLocales.edit().putBoolean(PREFERENCIA_DESACTIVAR_MY_LOCATION, true).commit();
+                    activarMyLocation();
+                }
+            }).create().show();
+    }
+
+    /**
+     * Determina el estado actual del GPS y asigna dicho estado a estadoGPS.
+     *
+     * Si el estado actual del GPS no coincide con el último estado conocido, entonces la función
+     * regresa true. En otras palabras, regresa true i el valor de estadoGPS fue cambiado a un
+     * valor distinto.
+     *
+     * Idealmente, se debe llamar al inicio de onResume. De esta manera, es posible mantener
+     * estadoGPS tan actualizado como sea posible y se puede alter MyLocation como sea necesario
+     * (desde otroe métodos, ya que este método no altera NyLocation de ninguna manera.) Su
+     * resultado debe ser asignado a la variable actualizarMyLocation como true.
+     *
+     * Antes de llamar este método, tenga en cuenta que también regresará true si estadoGPS cambia
+     * de ESTADO_GPS_DESCONOCIDO a un estado distinto.
+     */
+    public boolean actualizarEstadoGPS() {
+        String proveedorUbicacion = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ? LocationManager.GPS_PROVIDER : null;
+        int nuevoEstado = ESTADO_GPS_DESCONOCIDO;
+
+        if (proveedorUbicacion != null) {
+            nuevoEstado = ESTADO_GPS_ALTA_PRECISION;
+        } else {
+            nuevoEstado = ESTADO_GPS_DESACTIVADO_O_WIFI;
+        }
+
+        if (estadoGPS != nuevoEstado) {
+            estadoGPS = nuevoEstado;
+            actualizarMyLocation = true;
+            return true;
+        }
+
+        actualizarMyLocation = false;
+        return false;
     }
 
     /**
@@ -351,75 +490,70 @@ public class MapaActivity extends UbicacionUTBActivity implements OnMapReadyCall
      * Si el mapa no está aún cargado, o si no se tienen permisos de ACCESS_FINE_LOCATION, entonces
      * el mapa es reemplazado por un mensaje de error. Es un error crítico.
      *
-     * Si MyLocation está activado, entonces se actualiza la _preferencia_ DESACTIVAR_MY_LOCATION
-     * a false y se llama procesarComando()
+     * Si el estado del GPS ha cambiado a un estado distinto al último estado conocido, entonces
+     * se activa o desactiva MyLocation. Cuando el estado cambia a ESTADO_GPS_ALTA_PRECISION,
+     * entonces MyLocation es activado. Si cambia a desactivado o desconocido, entonces se
+     * desactiva MyLocation.
      *
-     * Si está activado el proveedor de GPS en modo alta precisión, entonces se actualiza el valor
-     * de la _preferencia_ DESACTIVAR_MY_LOCATION a false, se activa MyLocation y se llama
-     * el método procesarComando()
+     * Cuando el GPS está desactivado, se presenta al usuario un diálogo solicitando que se
+     * active el GPS en modo alta precisión en Settings. Si al regresar a la Activity desde
+     * settings el GPS continúa en un modo distinto a alta precisión, entonces la aplicación
+     * recordará este cambio y no presentará el diálogo al usuario. En este caso, MyLocation
+     * permancerá desactivado. Esto actualiza la _preferencia_ DESACTIVAR_MY_LOCATION a true.
      *
-     * Si ninguna de las anteriores condiciones se cumple y el valor de la _preferencia_
-     * DESACTIVAR_MY_LOCATION es false, entonces se le solicita al usuario que active el modo
-     * alta precisión del GPS en un diálogo.
+     * Si al regresar de Settings estadoGPS está activado, entonces MyLocation será activado y
+     * se actualizará la _preferencia_ DESACTIVAR_;Y_LOCATION con un valor de false.
      *
-     *      -- En este díalogo, si el usuario presiona cancelar, entonces se actualiza le
-     *         _preferencia_ DESACTIVAR_MY_LOCATION a true, se desactiva MyLocation y se ejecuta
-     *         el método procesarComando().
-     *      -- Si el usuario presiona "Abrir", entonces la Activity es reiniciada, y, después de
-     *         reiniciar:
-     *              -- Si el GPS está encendido, se activa MyLocation y se llama procesarComando()
-     *              -- Si el GPS está desactivado, entonces MyLocation permanecerá desactivado y
-     *                 se llamará procesarComando().
+     * En todos casos (excepto por el caso de permiso insuficiente o de mapa nulo), entonces se
+     * ejecutará procesarComando(). Es importante notar que procesarComando(), en los casos en que
+     * el usuario es enviado a Settings, será invocado solo cuando el usuario regrese a la Activity.
      *
-     * Si no se cumple ninguna de las anteriores condiciones (es decir, si la _preferencia_
-     * de DESACTIVAR_MY_LOCATION es true), entonces no se presenta ningún diálogo. MyLocation
-     * permanceré "permanentemente" desactivado hasta que el usuario manualmente active el modo
-     * alta precisión de su GPS. Se concluye invocando procesarComando().
-     *
-     * TODO: renombrar método? Su nombre no parece describir exactamente todo lo que hace...
+     * TODO: renombrar método? Su nombre no parece describir exactamente todo lo que hace.
      */
     public void activarMyLocation() {
-        String proveedorUbicacion;
-
-        Toast.makeText(this, "DEBUG: activarMyLocationStart()", Toast.LENGTH_SHORT).show();
-
         // Error ctítico si no hay un mapa o si no se cuenta con suficientes permisos.
         if (mapa == null || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             errorPermisos();
             return;
         }
 
-        // No es necesario hacer nada si MyLocation está activado.
-        if (mapa.isMyLocationEnabled()) {
-            Toast.makeText(this, "DEBUG: activarMyLocationStart(2if)", Toast.LENGTH_SHORT).show();
-            preferenciasLocales.edit().putBoolean(PREFERENCIA_DESACTIVAR_MY_LOCATION, false).commit();
-            procesarComando();
-            return;
+        // Si se necesita actualizar estadoGPS y por extensión MyLocation, entonces:
+        if (actualizarMyLocation) {
+            actualizarMyLocation = false;
+
+            if (estadoGPS == ESTADO_GPS_ALTA_PRECISION) {
+                preferenciasLocales.edit().putBoolean(PREFERENCIA_DESACTIVAR_MY_LOCATION, false).commit();
+
+                // Si el estado ahora es alta precisión, se activa MyLocation.
+                if (!mapa.isMyLocationEnabled()) {
+                    mapa.setMyLocationEnabled(true);
+                }
+            } else {
+                // Se desactiva MyLocation.
+                if (mapa.isMyLocationEnabled()) {
+                    mapa.setMyLocationEnabled(false);
+                }
+
+                // Diálogo si GPS no está en modo alta precisión y DESACTIVAR_MY_LOCATION es false
+                if (!preferenciasLocales.getBoolean(PREFERENCIA_DESACTIVAR_MY_LOCATION, false)) {
+                    mostrarDialogoPrecisionGPS();
+                    return;
+                }
+
+                /*
+                 * Si el diálogo no es presentado ya que no es necesario (es decir, si el GPS
+                 * cambió de ESTADO_GPS_DESACTIVADO_O_WIFI a ESTADO_GPS_DESCONOCIDO o vice-versa),
+                 * entonces no es necesario cambiar la _preferencia_ DESACTIVAR_MY_LOCATION ya que
+                 * el estado simplemente no es ESTADO_GPS_ALTA_PRECISION.
+                 *
+                 * En este caso, esto implica que la aplicación recuerda que el usuario no desea
+                 * activar el modo de alta precisión y se debe continuar la operación sin MyLocation
+                 */
+            }
         }
 
-        // Se consulta el proveedor de ubicaciones.
-        proveedorUbicacion = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ? LocationManager.GPS_PROVIDER : null;
-        Toast.makeText(this, "DEBUG: activarMyLocationStart(4thwall)", Toast.LENGTH_SHORT).show();
-
-        // Si el GPS está en modo alta precisión, entonces se activa MyLocation.
-        if (proveedorUbicacion != null) {
-            Toast.makeText(this, "DEBUG: activarMyLocationStart(3if)", Toast.LENGTH_SHORT).show();
-            preferenciasLocales.edit().putBoolean(PREFERENCIA_DESACTIVAR_MY_LOCATION, false).commit();
-            mapa.setMyLocationEnabled(true);
-            procesarComando();
-            return;
-        }
-
-        // Mostrar diálogo si GPS no está en modo alta precisión y DESACTIVAR_MY_LOCATION es false
-        if (!preferenciasLocales.getBoolean(PREFERENCIA_DESACTIVAR_MY_LOCATION, false)) {
-            Toast.makeText(this, "DEBUG: activarMyLocationStart(4if)", Toast.LENGTH_SHORT).show();
-            mostrarDialogoPrecisionGPS();
-            return;
-        }
-
-        // Si no se cumple nada de lo anterior, entonces se procesa el comando **sin MyLocation**
+        // Si no hubo error, entonces se ejecuta un comando pendiente.
         procesarComando();
-        return;
     }
 
     /**
@@ -436,8 +570,6 @@ public class MapaActivity extends UbicacionUTBActivity implements OnMapReadyCall
         mapa.setLatLngBoundsForCameraTarget(COORDENADAS_LIMITES_UNIVERSIDAD);
         mapa.setMinZoomPreference(ZOOM_MINIMO);
         mapa.setMaxZoomPreference(ZOOM_MAXIMO);
-
-        Toast.makeText(this, "DEBUG: prepararMapa()", Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -449,6 +581,7 @@ public class MapaActivity extends UbicacionUTBActivity implements OnMapReadyCall
     public void onMapReady(GoogleMap googleMap) {
         // Almacenando referencia a mapa y configurándolo, haciéndolo visible.
         mapa = googleMap;
+
         prepararMapa();
 
         // Se toma un curso de acción dependiendo de MyLocation y regresandoDeSettings.
@@ -459,8 +592,6 @@ public class MapaActivity extends UbicacionUTBActivity implements OnMapReadyCall
             // Si MyLocation no está activado,
             activarMyLocation();
         }
-
-        Toast.makeText(this, "DEBUG: onMapReady()", Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -547,7 +678,7 @@ public class MapaActivity extends UbicacionUTBActivity implements OnMapReadyCall
      * TODO: renombrar este método? **Indirectamente toma un curso de accíón.**
      */
     public void regresoDeSettings() {
-        if (mapa != null && regresandoDeSettings) {
+        if (regresandoDeSettings && mapa != null) {
             regresandoDeSettings = false;
 
             activarMyLocation();
@@ -559,20 +690,25 @@ public class MapaActivity extends UbicacionUTBActivity implements OnMapReadyCall
 
     /**
      * Parte del ciclo de vida de una Activity. Ejecutado al regresar a la Activity despueés de
-     * haberse hecho parcialmente invisible o después de onStart o después de onPause.
+     * haberse hecho parcialmente invisible o después de onStart o después de onPause. Siempre
+     * actualiza el valor de estadoGPS dependiendo del estado actual del GPS del dispositivo.
      *
      * Si el mapa está listo y se está regresando de Settings, entonces se toma un curso de
-     * acción. De lo contrario, no se hace nada.
+     * acción. De lo contrario, no se hace más nada.
      */
     @Override
     public void onResume() {
         super.onResume();
 
-        if (mapa != null && regresandoDeSettings) {
-            regresoDeSettings();
-        }
+        actualizarEstadoGPS();
 
-        Toast.makeText(this, "DEBUG: onResume()", Toast.LENGTH_SHORT).show();
+        if (mapa != null) {
+            if (regresandoDeSettings) {
+                regresoDeSettings();
+            } else if (actualizarMyLocation) {
+                activarMyLocation();
+            }
+        }
     }
 
     /**
@@ -587,6 +723,52 @@ public class MapaActivity extends UbicacionUTBActivity implements OnMapReadyCall
     }
 
     /**
+     * Maneja evento Connected con GooglePlayServices.
+     *
+     * TODO: implementar manejo de error? Es realmente necesario? Existe isConnected()
+     *
+     * @param bundle Datos recibidos.
+     */
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {}
+
+    /**
+     * Maneja el evento ConnectionSuspended con GooglePlayServices. Por el momento no hace nada.
+     *
+     * TODO: implementar manejo de error? Es realmente necesario? Existe isConnected()
+     *
+     * @param i Código de causa de suspensión de conexión.
+     */
+    @Override
+    public void onConnectionSuspended(int i) {}
+
+    /**
+     * Maneja evento ConnectionFailed de GooglePlayServices. Por el momento no hace nada.
+     *
+     * TODO: implementar manejo de error? Es realmente necesario? Existe isConnected()
+     *
+     * @param connectionResult Objeto con detalles sobre el resultado de conexión, incluyendo error.
+     */
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {}
+
+    /**
+     * Parte del ciclo de vida de toda Activity. Es llamado cuando la Activity no es visible,
+     * después de haber llamado onResume.
+     *
+     * Suspende la conexión con GooglePlayServices.
+     */
+    @Override
+    public void onStop() {
+        // Se desconecta de GooglePlayServices. Se reintentará re-conectar en onStart()
+        if (serviciosGooglePlay != null && serviciosGooglePlay.isConnected()) {
+            serviciosGooglePlay.disconnect();
+        }
+
+        super.onStop();
+    }
+
+    /**
      * Parte del ciclo de vida de toda Activity. Es llamado después de onCreate, o después de
      * onRestart si la Activity está siendo re-creada después de haber sido matada por Android.
      *
@@ -598,6 +780,11 @@ public class MapaActivity extends UbicacionUTBActivity implements OnMapReadyCall
      */
     @Override
     public void onStart() {
+        // Se conecta a GooglePlayServices para acceder a su LocationService.
+        if (serviciosGooglePlay != null && !serviciosGooglePlay.isConnected() && !serviciosGooglePlay.isConnecting()) {
+            serviciosGooglePlay.connect();
+        }
+
         super.onStart();
 
         if (locationManager == null) {
@@ -620,7 +807,6 @@ public class MapaActivity extends UbicacionUTBActivity implements OnMapReadyCall
         setContentView(R.layout.activity_mapa);
 
         fragmentMapa = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapa_fragment);
-        Toast.makeText(this, "DEBUG: inicializarLayout()", Toast.LENGTH_SHORT).show();
 
         contenedorFragmentMapa = (LinearLayout) findViewById(R.id.mapa_contenedor);
         mensajeNoMapa = (LinearLayout) findViewById(R.id.mapa_mensaje_error);
@@ -639,8 +825,10 @@ public class MapaActivity extends UbicacionUTBActivity implements OnMapReadyCall
     public void onRestoreInstanceState (Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
+        accion = savedInstanceState.getInt(PROPIEDAD_ACCION, ACCION_NO_ESPECIFICADA);
         regresandoDeSettings = savedInstanceState.getBoolean(PROPIEDAD_REGRESO_SETTINGS, false);
-        accion = savedInstanceState.getInt(PROPIEDAD_ACCION, ACCION_NINGUNA);
+        estadoGPS = savedInstanceState.getInt(PROPIEDAD_ESTADO_GPS, ESTADO_GPS_DESCONOCIDO);
+        regresandoDeSettings = savedInstanceState.getBoolean(PROPIEDAD_ACTUALIZAR_MY_LOCATION, false);
         latitudIntent = savedInstanceState.getDouble(PROPIEDAD_LATITUD_INTENT, DEFAULT_LATITUD);
         longitudIntent = savedInstanceState.getDouble(PROPIEDAD_LONGITUD_INTENT, DEFAULT_LONGITUD);
         latitudMapa = savedInstanceState.getDouble(PROPIEDAD_LATITUD_MAPA, latitudIntent);
@@ -664,6 +852,8 @@ public class MapaActivity extends UbicacionUTBActivity implements OnMapReadyCall
 
         outState.putInt(PROPIEDAD_ACCION, accion);
         outState.putBoolean(PROPIEDAD_REGRESO_SETTINGS, regresandoDeSettings);
+        outState.putInt(PROPIEDAD_ESTADO_GPS, estadoGPS);
+        outState.putBoolean(PROPIEDAD_ACTUALIZAR_MY_LOCATION, actualizarMyLocation);
         outState.putDouble(PROPIEDAD_LATITUD_INTENT, latitudIntent);
         outState.putDouble(PROPIEDAD_LONGITUD_INTENT, longitudIntent);
         outState.putDouble(PROPIEDAD_LATITUD_MAPA, latitudMapa);
@@ -673,7 +863,7 @@ public class MapaActivity extends UbicacionUTBActivity implements OnMapReadyCall
     }
 
     /**
-     * Inicializa datos que serán usados por esta Activity.
+     * Crea una conexión con GooglePlayServices e inicializa datos que usados por esta Activity.
      *
      * Si la Activity fue iniciada con un Intent con datos "extra" asociados, entonces se usarán
      * esos datos en la Activity. De lo contrario, entonces se usarán valores por defecto
@@ -687,25 +877,38 @@ public class MapaActivity extends UbicacionUTBActivity implements OnMapReadyCall
         Bundle informacionInicio = getIntent().getExtras();
 
         if (informacionInicio != null) {
-            accion = informacionInicio.getInt(PROPIEDAD_ACCION, ACCION_NINGUNA);
+            accion = informacionInicio.getInt(PROPIEDAD_ACCION, ACCION_NO_ESPECIFICADA);
             regresandoDeSettings = informacionInicio.getBoolean(PROPIEDAD_REGRESO_SETTINGS, false);
+            estadoGPS = informacionInicio.getInt(PROPIEDAD_ESTADO_GPS, ESTADO_GPS_DESCONOCIDO);
+            actualizarMyLocation = informacionInicio.getBoolean(PROPIEDAD_ACTUALIZAR_MY_LOCATION, false);
             latitudIntent = informacionInicio.getDouble(PROPIEDAD_LATITUD_INTENT, DEFAULT_LATITUD);
             longitudIntent = informacionInicio.getDouble(PROPIEDAD_LONGITUD_INTENT, DEFAULT_LONGITUD);
             latitudMapa = informacionInicio.getDouble(PROPIEDAD_LATITUD_MAPA, latitudIntent);
             longitudMapa = informacionInicio.getDouble(PROPIEDAD_LONGITUD_MAPA, longitudIntent);
             zoomMapa = informacionInicio.getFloat(PROPIEDAD_ZOOM, DEFAULT_ZOOM);
             rotacionMapa = informacionInicio.getFloat(PROPIEDAD_ROTACION, DEFAULT_ROTACION);
+            primerMovimiento = true;
         } else {
-            accion = ACCION_NINGUNA;
+            accion = ACCION_NO_ESPECIFICADA;
             regresandoDeSettings = false;
+            actualizarMyLocation = false;
+            estadoGPS = ESTADO_GPS_DESCONOCIDO;
             latitudIntent = DEFAULT_LATITUD;
             longitudIntent = DEFAULT_LONGITUD;
             latitudMapa = latitudIntent;
             longitudMapa = longitudIntent;
             zoomMapa = DEFAULT_ZOOM;
             rotacionMapa = DEFAULT_ROTACION;
+            primerMovimiento = true;
         }
 
-        Toast.makeText(this, "DEBUG: onCreate()", Toast.LENGTH_SHORT).show();
+        // Crea instancia de GooglePlayServices, pero no intenta crear una conexión.
+        if (serviciosGooglePlay == null) {
+            serviciosGooglePlay = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+            .build();
+        }
     }
 }
