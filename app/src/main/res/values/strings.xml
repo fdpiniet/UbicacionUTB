@@ -26,4 +26,23 @@
 
     <string name="entrada_utb">Entrada UTB</string>
     <string name="lugar_utb">UTB Place</string>
+    <string name="permiso_ubicacion_no_preguntar">Permission permanently denied.\nCheck Settings.</string>
+    <string name="permiso_ubicacion_denegado">Permission denied.</string>
+    <string name="permiso_ubicacion_razon">This application requires the GPS to be enabled.</string>
+    <string name="button_permitir">Allow</string>
+    <string name="button_denegar">Deny</string>
+    <string name="button_aceptar">Accept</string>
+    <string name="button_ok">OK</string>
+    <string name="button_cancelar">Cancel</string>
+    <string name="permiso_ubicacion_precision">You will also need to set your GPS to high precision mode. If it\'s disabled, the application won\'t, but your current location won\'t be displayed.</string>
+    <string name="button_si">Yes</string>
+    <string name="button_no">No</string>
+    <string name="button_abrir">Open</string>
+    <string name="button_cerrar">Close</string>
+    <string name="button_salir">Exit</string>
+    <string name="permiso_ubicacion_lanzar_settings">Launch settings?</string>
+    <string name="permiso_ubicacion_precision_activado">High accuracy mode activated.</string>
+    <string name="permiso_ubicacion_precision_desactivado">Continuing without high accuracy mode.</string>
+    <string name="mapa_titulo_error">We\'re sorry!</string>
+    <string name="mapa_error_permisos">The application has not been granted sufficient permissions to display the map.\n\nPlease, check your phone\'s GPS settings and this application\'s location permissions.</string>
 </resources>
