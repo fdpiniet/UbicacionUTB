@@ -12,10 +12,7 @@
 
         <include layout="@layout/menu_toolbar" />
 
-        <LinearLayout android:id="@+id/activity_mapa"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-        </LinearLayout>
+        <include layout="@layout/content_mapa" />
 
     </android.support.design.widget.CoordinatorLayout>
 

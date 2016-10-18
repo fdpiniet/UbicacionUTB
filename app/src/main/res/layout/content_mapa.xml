@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="utb.desarrollomovil.ubicacionutb.MainActivity">
+
+    <!--
+      >> Contenedor del fragment correspondiente al mapa.
+      >>
+      >> NOTA: este LinearLayout y el siguiente inician ambos ocultos en la Activity, y son
+      >> mostrados en tiempo de ejecución dependiendo de ciertas condiciones:
+      >>
+      >>  * Si el GPS está activado, los permisos de la aplicación son suficientes, y si el GPS
+      >>    está en modo "sólo disposiivo" o "alta precisión", entonces se muestra este LinearLayout
+      >>    y no el siguiente.
+      >>
+      >>  * Si no se cumple alguna de las anteriores condiciones, entonces este LinearLayout
+      >>    permanecerá oculto.
+      >>
+      >> Tenga en cuenta que desactivar el GPS o remover permisos en tiempo de ejecución causará
+      >> que el mapa sea terminado y que el siguiente LinearLayout sea mostrado.
+      -->
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:id="@+id/mapa_contenedor">
+
+        <!-- El mapa. -->
+        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:map="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/mapa_fragment"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context="utb.desarrollomovil.ubicacionutb.MapaActivity" />
+
+    </LinearLayout>
+
+    <!--
+      >> Contenedor de mensajes de error pertinentes a insuficiencia de permisos o falta de GPS.
+      >> Dependiendo de ciertas condiciones, este elemento permanecerá o no oculto en la Activity.
+      >> Por favor vea los comentarios del LinearLayout que precede a este elemento
+      -->
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:id="@+id/mapa_mensaje_error">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/mapa_titulo_error"
+            android:layout_marginTop="38dp"
+            android:textStyle="bold"
+            android:textSize="@dimen/titulo_activity_main"
+            android:textAlignment="center" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/mapa_error_permisos"
+            android:layout_marginTop="46dp"
+            android:textSize="@dimen/titulo_activity_main_tagline"
+            android:textAlignment="center" />
+
+    </LinearLayout>
+</RelativeLayout>
